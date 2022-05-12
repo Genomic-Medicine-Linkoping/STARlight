@@ -1,8 +1,6 @@
-###########################
-## RNA-seq STAR Pipeline ##
-###########################
-# module load snakemake-6.0.2 STAR-2.7.6a subread-2.0.1 picard-2.23.8 fastqc-0.11.9 R-4.0.3 multiqc-1.9 
-# snakemake -p --cores 12 -s STARlight.smk
+################################
+## STARlight RNA-seq Pipeline ##
+################################
 
 configfile:
     "config.json"
@@ -24,6 +22,7 @@ rule all:
         #idx = directory('index'),
         fqc = expand(LOGS + '/{sample}.fastqc.log', sample=SAMPLES),
         bam = expand(BAMS + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
+        bg = expand(BAMS + "/{sample}.bedgraph", sample=SAMPLES),
         fc1 = RESULTS + '/featureCounts_genes.txt',
         fc2 = RESULTS + '/featureCounts_transcripts.txt',
         m1 = RESULTS + '/featureCounts_genes_mod.txt',
@@ -98,6 +97,23 @@ rule align_sort:
         #'mv results/Log.out {output.log}'
 
 
+rule bamCoverage:
+    input:
+        bam = rules.align_sort.output.bam,
+    output:
+        bg = BAMS + '/{sample}.bedgraph',
+    log:
+        #log1 = LOGS + '/{sample}.index.log',
+        #log2 = LOGS + '/{sample}.bamCoverage.log'
+    threads:
+        24
+    shell:
+        """
+        samtools index {input.bam} -@ {threads}
+        bamCoverage -b {input.bam} -o {output.bg} -of bedgraph --normalizeUsing RPKM
+        """
+
+
 rule featureCounts:
     input:
         bam = expand(BAMS + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
@@ -130,13 +146,13 @@ rule multiqc:
     params:
         indir = RESULTS,
     log:
-        log1 = LOGS + '/multiqc.log',
+        log = LOGS + '/multiqc.log',
     threads: 
         24
     shell:
         """
         cd {params.indir}
-        multiqc .
+        multiqc . >> {log} 2>&1
         """
 
 
