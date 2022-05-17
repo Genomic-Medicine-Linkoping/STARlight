@@ -124,7 +124,8 @@ dgList <- dgeFull[keep,]
 dgList$samples$lib.size <- colSums(dgList$counts)
 #dgList$samples
 fdgList <- calcNormFactors(dgList, method="TMM")
-write.xlsx(fdgList$samples, file.path(out, "edgeR_obj.xlsx"), overwrite=TRUE, asTable=TRUE)
+robj <- setDT(fdgList$samples, keep.rownames = "sample")
+write.xlsx(robj, file.path(out, "edgeR_obj.xlsx"), overwrite=TRUE, asTable=TRUE)
 #fdgList$samples
 
 
@@ -139,6 +140,13 @@ countsPerMillion <- cpm(fdgList, log=FALSE)
 write.table(countsPerMillion, file=file.path(out, 'raw_counts_cpm_after_norm.txt'), row.names=TRUE, sep="\t", quote=FALSE)
 countsPerMillionLog2 <- cpm(fdgList, log=TRUE)
 write.table(countsPerMillionLog2, file=file.path(out, 'raw_counts_log2cpm_after_norm.txt'), row.names=TRUE, sep="\t", quote=FALSE)
+
+# Print .xlsx file format
+tCPM <- setDT(as.data.frame(countsPerMillion), keep.rownames = "gene")
+write.xlsx(tCPM, file.path(out, "raw_counts_cpm_after_norm.xlsx"), overwrite=TRUE, asTable=FALSE)
+tCPMlog2 <- setDT(as.data.frame(countsPerMillionLog2), keep.rownames = "gene")
+write.xlsx(tCPMlog2, file.path(out, "raw_counts_log2cpm_after_norm.xlsx"), overwrite=TRUE, asTable=FALSE)
+
 
 # Estimate dispersion
 y <- estimateDisp(fdgList)

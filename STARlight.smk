@@ -164,12 +164,14 @@ rule rearrangeCounts:
     output:
         tab1 = RESULTS + '/featureCounts_genes_mod.txt',
         tab2 = RESULTS + '/featureCounts_transcripts_mod.txt',
+    params:
+        rFC = config['rearrangeFC'],
     threads: 
         24
     shell:
         """
-        Rscript ./scripts/rearrangeFeatureCounts.R {input.genes} {input.sampleInfo} {output.tab1}
-        Rscript ./scripts/rearrangeFeatureCounts.R {input.tranx} {input.sampleInfo} {output.tab2}
+        Rscript {params} {input.genes} {input.sampleInfo} {output.tab1}
+        Rscript {params} {input.tranx} {input.sampleInfo} {output.tab2}
         """
 
 
@@ -188,10 +190,11 @@ rule edgeR:
         nsamp = config['nsamples'],
         logFC = config['logFC'],
         pval = config['pval'],
-        path = RESULTS
+        path = RESULTS,
+        edgeR = config['edgeR'],
     threads: 
         24
     shell:
         """
-        Rscript ./scripts/edger.R {input.genes} {input.sampleInfo} {input.compsTab} {params.species} {params.cpm} {params.nsamp} {params.logFC} {params.pval} {params.path}
+        Rscript {params.edgeR} {input.genes} {input.sampleInfo} {input.compsTab} {params.species} {params.cpm} {params.nsamp} {params.logFC} {params.pval} {params.path}
         """
