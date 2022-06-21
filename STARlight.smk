@@ -189,6 +189,7 @@ rule edgeR:
         cpm = config['cpm'],
         nsamp = config['nsamples'],
         logFC = config['logFC'],
+        FDR = config['FDR'],
         pval = config['pval'],
         path = RESULTS,
         edgeR = config['edgeR'],
@@ -196,5 +197,5 @@ rule edgeR:
         24
     shell:
         """
-        Rscript {params.edgeR} {input.genes} {input.sampleInfo} {input.compsTab} {params.species} {params.cpm} {params.nsamp} {params.logFC} {params.pval} {params.path}
+        Rscript {params.edgeR} {input.genes} {input.sampleInfo} {input.compsTab} {params.species} {params.cpm} {params.nsamp} {params.logFC} {params.FDR} {params.pval} {params.path}
         """

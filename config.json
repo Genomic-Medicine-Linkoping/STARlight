@@ -11,10 +11,11 @@
     "sampleInfo": "/mnt/WD2/BIN22P009_CE/input/sampleInfo.txt",
     "compsTab": "/mnt/WD2/BIN22P009_CE/input/compsTab.txt",
     "species": "hsapiens_gene_ensembl",
-    "cpm": "1",
+    #filter on poorly expressed genes
+    "cpm": "10",
     "nsamples": "3",
     "logFC": "1.5",
-    "FDR": "0.1",
+    "FDR": "0.05",
     #pval could be only 0 or 1.
     #when set to 1 filter on PValue instead of FDR.
     "pval": "0",

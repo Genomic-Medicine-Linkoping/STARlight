@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-#Rscript edger.R ./Results/featureCounts_genes_mod.txt ./Results/sampleInfo.txt ./Results/compsTab.txt mmusculus_gene_ensembl 1 2 1.5 0.05 /path/to/results
+#Rscript edger.R ./Results/featureCounts_genes_mod.txt ./Results/sampleInfo.txt ./Results/compsTab.txt mmusculus_gene_ensembl 1 2 1.5 0.1 0 /path/to/results
 args = commandArgs(trailingOnly=TRUE)
 
 # Load the libraries
@@ -69,20 +69,21 @@ edgeR2anno <- function(etObj, annoObj, fileName) {
 }
 
 print_tab <- function(comps, compT) {
+	col <- ifelse(fpval == 0, quote(FDR), quote(PValue))
     for (i in comps$comp){
         dt <- compT[[i]]
         write.table(dt, file=file.path(out, paste(i, "_unfiltered.tsv", sep="")), row.names=FALSE, col.names=TRUE, quote=FALSE, sep="\t")
-	write.xlsx(dt, file=file.path(out, paste(i, "_unfiltered.xlsx", sep="")), overwrite=TRUE, asTable=TRUE)
-        dt <- dt[(logFC >= flogFC & PValue <= fpval) | (logFC <= -flogFC & PValue <= fpval) ,]
-	write.table(dt, file=file.path(out, paste(i, "_filtered.tsv", sep="")), row.names=FALSE, col.names=TRUE, quote=FALSE, sep="\t")
-	write.xlsx(dt, file=file.path(out, paste(i, "_filtered.xlsx", sep="")), overwrite=TRUE, asTable=TRUE)
+		write.xlsx(dt, file=file.path(out, paste(i, "_unfiltered.xlsx", sep="")), overwrite=TRUE, asTable=TRUE)
+        dt <- dt[(logFC >= flogFC & eval(col) <= fFDR) | (logFC <= -flogFC & eval(col) <= fFDR) ,]
+		write.table(dt, file=file.path(out, paste(i, "_filtered.tsv", sep="")), row.names=FALSE, col.names=TRUE, quote=FALSE, sep="\t")
+		write.xlsx(dt, file=file.path(out, paste(i, "_filtered.xlsx", sep="")), overwrite=TRUE, asTable=TRUE)
     }
 }
 
 
 # Create the results folder
 #out <- file.path(getwd(), "edgeR_results")
-out <- file.path(args[9], "edgeR_results")
+out <- file.path(args[10], "edgeR_results")
 test_output(out)
 
 
@@ -97,7 +98,9 @@ species <- args[4]
 nCPM <- as.numeric(args[5])
 nSamples <- as.numeric(args[6])
 flogFC <- as.numeric(args[7])
-fpval <- as.numeric(args[8])
+fFDR <- as.numeric(args[8])
+fpval <- as.numeric(args[9])
+
 
 # Create the DGE list
 dgeFull <- DGEList(data_raw, genes=rownames(data_raw), group=sampleInfo$condition)
