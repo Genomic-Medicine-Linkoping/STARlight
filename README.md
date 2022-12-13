@@ -5,7 +5,7 @@ RNA-seq STAR Pipeline
 Load the required modules:
 
 ```bash
-module load snakemake-6.0.2 STAR-2.7.6a subread-2.0.1 picard-2.23.8 fastqc-0.11.9 R-4.0.3 multiqc-1.9 cutadapt-3.3 samtools-1.11 deeptools-3.5.0
+module load snakemake-7.12.1 STAR-2.7.10a subread-2.0.1 picard-2.23.8 fastqc-0.11.9 R-4.0.3 multiqc-1.9 cutadapt-3.3 samtools-1.11 deeptools-3.5.0
 ```
 
 Run the Snakemake command pointing to the location of the .smk file and the config file:
@@ -17,6 +17,7 @@ snakemake -p --cores 12 -s /path/to/STARlight/STARlight.smk --configfile /path/t
 If you need to merge fastq files coming from different lanes you can run *catlanes* ahead of *STARlight*:
 
 ```bash
+module load snakemake-7.12.1 fastqc-0.11.9 multiqc-1.9
 snakemake -p 12 -s catlanes.smk --configfile /path/to/catlanes.json
 ```
 <br>
@@ -50,3 +51,4 @@ STARlight works with ENSEMBL. A reference genome and a GTF file for the interest
 human: hsapiens_gene_ensembl
 mouse: mmusculus_gene_ensembl
 ```
+
