@@ -24,9 +24,9 @@ rule all:
         bam = expand(BAMS + "/{sample}.Aligned.sortedByCoord.out.bam", sample=SAMPLES),
         bg = expand(BAMS + "/{sample}.bedgraph", sample=SAMPLES),
         fc1 = RESULTS + '/featureCounts_genes.txt',
-        fc2 = RESULTS + '/featureCounts_transcripts.txt',
+        #fc2 = RESULTS + '/featureCounts_transcripts.txt',
         m1 = RESULTS + '/featureCounts_genes_mod.txt',
-        m2 = RESULTS + '/featureCounts_transcripts_mod.txt',
+        #m2 = RESULTS + '/featureCounts_transcripts_mod.txt',
         multiqc = RESULTS + '/multiqc_report.html',
         #res = RESULTS + "/edgeR_results" + "/raw_counts_cpm_after_norm.txt",
         res = RESULTS + "/edgeR_results" + "/sessionInfo.txt",
@@ -120,7 +120,10 @@ rule featureCounts:
         gtf = config['gtf'] # provide your GTF file
     output:
         res1 = RESULTS + '/featureCounts_genes.txt',
-        res2 = RESULTS + '/featureCounts_transcripts.txt'
+        #res2 = RESULTS + '/featureCounts_transcripts.txt'
+    params:
+        stranded = config['stranded'],
+        attribute = config['attribute'],
     log:
         log1 = LOGS + '/featureCounts_genes.log',
         log2 = LOGS + '/featureCounts_transcripts.log'
@@ -128,13 +131,10 @@ rule featureCounts:
         24
     shell:
         'featureCounts -a {input.gtf} '
+        '-g {params.attribute} '
+        '-p -s {params.stranded} '
         '-o {output.res1} '
         '-T {threads} {input.bam} >> {log.log1} 2>&1 \n'
-        
-        'featureCounts -a {input.gtf} '
-        '-g transcript_id '
-        '-o {output.res2} '
-        '-T {threads} {input.bam} >> {log.log2} 2>&1'
 
 
 rule multiqc:
@@ -159,11 +159,11 @@ rule multiqc:
 rule rearrangeCounts:
     input:
         genes = rules.featureCounts.output.res1,
-        tranx = rules.featureCounts.output.res2,
+        #tranx = rules.featureCounts.output.res2,
         sampleInfo = config['sampleInfo']
     output:
         tab1 = RESULTS + '/featureCounts_genes_mod.txt',
-        tab2 = RESULTS + '/featureCounts_transcripts_mod.txt',
+        #tab2 = RESULTS + '/featureCounts_transcripts_mod.txt',
     params:
         rFC = config['rearrangeFC'],
     threads: 
@@ -171,14 +171,14 @@ rule rearrangeCounts:
     shell:
         """
         Rscript {params} {input.genes} {input.sampleInfo} {output.tab1}
-        Rscript {params} {input.tranx} {input.sampleInfo} {output.tab2}
         """
+        #Rscript {params} {input.tranx} {input.sampleInfo} {output.tab2}
 
 
 rule edgeR:
     input:
         genes = rules.rearrangeCounts.output.tab1,
-        tranx = rules.rearrangeCounts.output.tab2,
+        #tranx = rules.rearrangeCounts.output.tab2,
         sampleInfo = config['sampleInfo'],
         compsTab = config['compsTab'],
     output:
