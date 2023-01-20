@@ -1,6 +1,6 @@
 {
-    "data": "/mnt/WD2/BIN22P009_CE/catlanes/fastq",
-    "workdir": "/mnt/WD2/BIN22P009_CE",
+    "data": "/home/massi/Documents/CFFMHS-MH-2324/catlanes/fastq",
+    "workdir": "/home/massi/Documents/CFFMHS-MH-2324",
     #"index": "/mnt/WD1/ref/STAR/ensembl_GRCh38/index",
     "ref": "/mnt/WD1/ref/STAR/ensembl_GRCh38/Homo_sapiens.GRCh38.dna.primary_assembly.fa",
     "gtf": "/mnt/WD1/ref/STAR/ensembl_GRCh38/Homo_sapiens.GRCh38.106.gtf",
@@ -8,9 +8,13 @@
     "R2_suffix": "_R2_001.fastq.gz",
     "rearrangeFC": "/home/massi/Documents/repo/STARlight/scripts/rearrangeFeatureCounts.R",
     "edgeR": "/home/massi/Documents/repo/STARlight/scripts/edger.R",
-    "sampleInfo": "/mnt/WD2/BIN22P009_CE/input/sampleInfo.txt",
-    "compsTab": "/mnt/WD2/BIN22P009_CE/input/compsTab.txt",
+    "sampleInfo": "/home/massi/Documents/CFFMHS-MH-2324/sampleInfo.txt",
+    "compsTab": "/home/massi/Documents/CFFMHS-MH-2324/compsTab.txt",
     "species": "hsapiens_gene_ensembl",
+    #'gene_id' or 'transcript_id'
+    "attribute": "gene_id",
+    #0 (unstranded), 1 (stranded) and 2 (reversely stranded)
+    "stranded": "0",
     #filter on poorly expressed genes
     "cpm": "10",
     "nsamples": "3",
